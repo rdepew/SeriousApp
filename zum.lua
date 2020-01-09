@@ -9,14 +9,9 @@ local scene = composer.newScene()
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 
-local function gotoMqtt() -- "game" is what we're calling the main app screen
-  composer.gotoScene( "mqtt_listener" )
+local function gotoMenu()
+  composer.gotoScene( "menu" )
 end
-
-local function gotoZum() -- "game" is what we're calling the main app screen
-  composer.gotoScene( "zum" )
-end
-
 
 
 -- -----------------------------------------------------------------------------------
@@ -29,54 +24,32 @@ function scene:create( event )
   local sceneGroup = self.view
   -- Code here runs when the scene is first created but has not yet appeared on screen
 
-  local myText = display.newEmbossedText( "hello", display.contentCenterX, 100, native.systemFontBold, 40 )
-  myText:setFillColor( 0.5 )
-  myText:setText( "Serious App" )
-  local color =
-  {
-    highlight = { r=1, g=1, b=1 },
-    shadow = { r=0.3, g=0.3, b=0.3 }
-  }
-  myText:setEmbossColor( color )
-  sceneGroup:insert( myText )
+  local title = display.newText( "ZumLink Viewer", display.contentCenterX, 5, native.systemFontBold)
+  title:setFillColor( 0 )
+  sceneGroup:insert( title )
 
   -- Functions to handle button events
-  local function handleButton1Event( event )
+  local function handleQuitEvent( event )
     if ( "ended" == event.phase ) then
-      print( "Button1 was pressed and released" )
-      gotoMqtt()
+      print( "Quit button was pressed and released" )
+      gotoMenu()
     end
   end
-
-  local function handleButton2Event( event )
-    if ( "ended" == event.phase ) then
-      print( "Button2 was pressed and released" )
-      gotoZum()
-    end
-  end
-
-  -- Create the widgets
-  local button1 = widget.newButton(
-    {
-      left = 50,
-      top = 200, 
-      id = "button1",
-      label = "Touch here for MQTT listener",
-      onEvent = handleButton1Event
-    }
-  )
-  sceneGroup:insert( button1 )
   
-  local button2 = widget.newButton(
+  -- Create the widgets
+  local quitButton = widget.newButton(
     {
       left = 50,
-      top = 300, 
-      id = "button2",
-      label = "Touch here for ZumLink monitor",
-      onEvent = handleButton2Event
+      -- top = display.contentHeight-25,
+      top = 400,
+      -- id = "quit",
+      id = "quitButton",
+      label = "Quit and return to menu",
+      onEvent = handleQuitEvent
     }
   )
-  sceneGroup:insert( button2 )
+  sceneGroup:insert( quitButton )
+
 
 end
 
@@ -108,6 +81,7 @@ function scene:hide( event )
 
 	elseif ( phase == "did" ) then
 		-- Code here runs immediately after the scene goes entirely off screen
+
 	end
 end
 
