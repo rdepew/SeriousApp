@@ -24,9 +24,50 @@ function scene:create( event )
   local sceneGroup = self.view
   -- Code here runs when the scene is first created but has not yet appeared on screen
 
-  local title = display.newText( "ZumLink Viewer", display.contentCenterX, 5, native.systemFontBold)
+  local title = display.newText( "ZumLink Viewer", display.contentCenterX, 0, native.systemFontBold, 24)
   title:setFillColor( 0 )
   sceneGroup:insert( title )
+
+
+  ipAddrLabel = display.newText( "IP Address", 10, title.y + 40, native.systemFont, 18 )
+  ipAddrLabel:setFillColor( 0.3, 0.3, 0.3 )
+  ipAddrLabel.anchorX = 0
+  sceneGroup:insert( ipAddrLabel )
+
+  snLabel = display.newText( "Serial Number", 10, ipAddrLabel.y + 30, native.systemFont, 18 )
+  snLabel:setFillColor( 0.3, 0.3, 0.3 )
+  snLabel.anchorX = 0
+  sceneGroup:insert( snLabel )
+
+  devNameLabel = display.newText( "Device Name", 10, snLabel.y + 30, native.systemFont, 18 )
+  devNameLabel:setFillColor( 0.3, 0.3, 0.3 )
+  devNameLabel.anchorX = 0
+  sceneGroup:insert( devNameLabel )
+
+  modelLabel = display.newText( "Device Model", 10, devNameLabel.y + 30, native.systemFont, 18 )
+  modelLabel:setFillColor( 0.3, 0.3, 0.3 )
+  modelLabel.anchorX = 0
+  sceneGroup:insert( modelLabel )
+
+  fwLabel = display.newText( "Firmware Version", 10, modelLabel.y + 30, native.systemFont, 18 )
+  fwLabel:setFillColor( 0.3, 0.3, 0.3 )
+  fwLabel.anchorX = 0
+  sceneGroup:insert( fwLabel )
+
+  rteLabel = display.newText( "RTE Version", 10, fwLabel.y + 30, native.systemFont, 18 )
+  rteLabel:setFillColor( 0.3, 0.3, 0.3 )
+  rteLabel.anchorX = 0
+  sceneGroup:insert( rteLabel )
+
+  licenseLabel = display.newText( "Licenses", 10, rteLabel.y + 30, native.systemFont, 18 )
+  licenseLabel:setFillColor( 0.3, 0.3, 0.3 )
+  licenseLabel.anchorX = 0
+  sceneGroup:insert( licenseLabel )
+
+  uptimeLabel = display.newText( "Up Time", 10, licenseLabel.y + 30, native.systemFont, 18 )
+  uptimeLabel:setFillColor( 0.3, 0.3, 0.3 )
+  uptimeLabel.anchorX = 0
+  sceneGroup:insert( uptimeLabel )
 
   -- Functions to handle button events
   local function handleQuitEvent( event )
