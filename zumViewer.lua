@@ -50,6 +50,11 @@ local function fieldHandler( textField )
                           print( textField().text .. " is not a valid address" )
                         end
                         textField().text = ipAddr
+                        local retval = zumlink.ping( ipAddr )
+                        print( "ping retval is ", retval )
+                        local retval = zumlink.cmd( ipAddr, "systemInfo" )
+                        print( "systemInfo retval is ", retval )
+
 			
 			-- Hide keyboard
 			native.setKeyboardFocus( nil )
