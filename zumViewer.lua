@@ -1,6 +1,6 @@
-
 local composer = require( "composer" )
 local widget = require( "widget" ) -- for the pushbutton
+local zumlink = require( "zumlink" )
 
 local scene = composer.newScene()
 
@@ -20,6 +20,8 @@ local fwLabel
 local rteLabel
 local licenseLabel
 local uptimeLabel
+
+local ipAddr
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -43,7 +45,11 @@ local function fieldHandler( textField )
 		
 		elseif ( "submitted" == event.phase ) then
 			-- This event occurs when the user presses the "return" key (if available) on the onscreen keyboard
-			print( textField().text )
+                        ipAddr = zumlink.verifyIpAddress( textField().text )
+                        if ( ipAddr == "" ) then
+                          print( textField().text .. " is not a valid address" )
+                        end
+                        textField().text = ipAddr
 			
 			-- Hide keyboard
 			native.setKeyboardFocus( nil )

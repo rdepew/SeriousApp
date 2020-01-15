@@ -14,7 +14,7 @@ local function gotoMqtt() -- "game" is what we're calling the main app screen
 end
 
 local function gotoZum() -- "game" is what we're calling the main app screen
-  composer.gotoScene( "zum" )
+  composer.gotoScene( "zumViewer" )
 end
 
 
