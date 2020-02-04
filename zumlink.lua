@@ -8,9 +8,9 @@
 --
 --     mymodule.fool()
 
-local mime = require( "mime" )
-
 local zumlink = {}
+
+local callbackFunction -- used by networkListener()
 
 function zumlink.verifyIpAddress( x )
   -- Does it have four numbers, separated by three dots?
@@ -32,13 +32,13 @@ function zumlink.verifyIpAddress( x )
   end
 end
 
+
 local function networkListener( event )
   if( event.isError ) then
     print( "Network error: ", event.response)
-    return false, event.response
   else
-    print( "RESPONSE: " .. event.response )
-    return true, event.response
+    print( "In networkListener, RESPONSE: " .. event.response )
+    callbackFunction( event.response )
   end
 end
 
@@ -69,21 +69,15 @@ end
 
 -- Return a string which is the JSON object. 
 -- Let the calling function sort it out.
-function zumlink.cmd( ip, command )
+function zumlink.cmd( ip, command, callback )
   -- TODO: Use a module-scope {} var called "zum".
   -- zum.prefix, zum.ipAddr, zum.cmd, ...
   local cmd = {}
   cmd.command = command
-  -- cmd.success, cmd.response = network.request( "http://admin:admin@" .. ip .. "/cli/" .. cmd.command, "GET", networkListener, params )
   local url = "http://admin:admin@" .. ip .. "/cli/" .. cmd.command
   print( url )
-  -- cmd.success, cmd.response = network.request( url, "GET", networkListener, params )
-  local a, b = network.request( url, "GET", networkListener, params )
-  if( a ) then
-      print( "YAY YAY YAY YAY YAY" )
-      print( b )
-  end
-  return cmd.response
+  callbackFunction = callback -- <-- cache callback
+  network.request( url, "GET", networkListener, params )
 end
 
 return zumlink
