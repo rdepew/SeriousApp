@@ -1,5 +1,6 @@
 local composer = require( "composer" )
 local widget = require( "widget" ) -- for the pushbutton
+local json = require( "json" )
 local zumlink = require( "zumlink" )
 
 local scene = composer.newScene()
@@ -32,9 +33,28 @@ local function gotoMenu()
   composer.gotoScene( "menu" )
 end
 
-local function systeminfo_cb( stuff )
-    print("In systeminfo_cb")
-    print( stuff )
+local function systeminfo_cb( response )
+    -- print("In systeminfo_cb")
+    local r2=response:sub( 2, response:len() - 2 ) -- strip square brackets and newline
+    local decoded, pos, msg = json.decode( r2 )
+    if not decoded then
+        print( "Decode failed at "..tostring(pos)..": "..tostring(msg) )
+    else
+        -- print( json.prettify( decoded ))
+        -- If decoded.RESULT.MESSAGE is "OK", then the command executed successfully.
+        -- print( decoded.RESULT.MESSAGE )
+        snField.text = decoded.RESPONSE.pages.systemInfo.serialNumber 
+        devNameField.text = decoded.RESPONSE.pages.systemInfo.deviceName
+        modelField.text =  decoded.RESPONSE.pages.systemInfo.deviceModel
+        fwField.text =  decoded.RESPONSE.pages.systemInfo.deviceFirmwareVersion
+        rteField.text =  decoded.RESPONSE.pages.systemInfo.rteVersion
+        licenseField.text =  decoded.RESPONSE.pages.systemInfo.licenses
+    end
+end
+
+local function uptime_cb( response )
+    print( "In uptime_cb" ) 
+    print( response )
 end
 
 local function fieldHandler( textField )
@@ -55,10 +75,8 @@ local function fieldHandler( textField )
                           print( textField().text .. " is not a valid address" )
                         end
                         textField().text = ipAddr
-                        -- local retval = zumlink.ping( ipAddr )
-                        -- print( "ping retval is ", retval )
-                        local retval = zumlink.cmd( ipAddr, "systemInfo", systeminfo_cb )
-                        -- print( retval )
+                        zumlink.cmd( ipAddr, "systemInfo", systeminfo_cb )
+                        zumlink.cmd( ipAddr, "upTime", uptime_cb )
 			
 			-- Hide keyboard
 			native.setKeyboardFocus( nil )

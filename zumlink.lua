@@ -37,7 +37,7 @@ local function networkListener( event )
   if( event.isError ) then
     print( "Network error: ", event.response)
   else
-    print( "In networkListener, RESPONSE: " .. event.response )
+    -- print( "In networkListener, RESPONSE: " .. event.response )
     callbackFunction( event.response )
   end
 end
