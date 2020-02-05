@@ -81,7 +81,7 @@ local function dump_cb( response )
     t = string.find( response, "Network error" )
     print( t )
     if string.find( response, "Network error" ) then
-        errorPopup( "Network Error", "Couldn't connect to" .. ipAddr )
+        errorPopup( "Network Error", response:sub(16) .. " - " .. ipAddr )
         return
     end
     local r2=response:sub( 2, response:len() - 2 ) -- strip square brackets and newline
