@@ -33,6 +33,15 @@ local function gotoMenu()
   composer.gotoScene( "menu" )
 end
 
+local function errorPopup( title, msg )
+  local alert = native.showAlert( title, msg, { "Bummer" } )
+  -- Dismiss "alert" after 10 seconds if user has not responded
+  local function cancelMyAlert()
+      native.cancelAlert( alert )
+  end
+  timer.performWithDelay( 10000, cancelMyAlert )
+end
+
 local function systeminfo_cb( response )
     -- print("In systeminfo_cb")
     local r2=response:sub( 2, response:len() - 2 ) -- strip square brackets and newline
@@ -68,6 +77,13 @@ end
 
 local function dump_cb( response )
     -- print("In dump_cb")
+    print( response )
+    t = string.find( response, "Network error" )
+    print( t )
+    if string.find( response, "Network error" ) then
+        errorPopup( "Network Error", "Couldn't connect to" .. ipAddr )
+        return
+    end
     local r2=response:sub( 2, response:len() - 2 ) -- strip square brackets and newline
     local decoded, pos, msg = json.decode( r2 )
     if not decoded then
@@ -114,9 +130,10 @@ local function fieldHandler( textField )
                         end
                         textField().text = ipAddr
                         zumlink.cmd( ipAddr, "dump", dump_cb )
-			
 			-- Hide keyboard
 			native.setKeyboardFocus( nil )
+                        -- Show spinner here
+                        
 		end
 	end
 end
