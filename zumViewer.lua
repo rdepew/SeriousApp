@@ -43,7 +43,7 @@ local function systeminfo_cb( response )
         -- print( json.prettify( decoded ))
         -- If decoded.RESULT.MESSAGE is "OK", then the command executed successfully.
         -- print( decoded.RESULT.MESSAGE )
-        snField.text = decoded.RESPONSE.pages.systemInfo.serialNumber 
+        snField.text = decoded.RESPONSE.pages.systemInfo.serialNumber
         devNameField.text = decoded.RESPONSE.pages.systemInfo.deviceName
         modelField.text =  decoded.RESPONSE.pages.systemInfo.deviceModel
         fwField.text =  decoded.RESPONSE.pages.systemInfo.deviceFirmwareVersion
@@ -53,9 +53,47 @@ local function systeminfo_cb( response )
 end
 
 local function uptime_cb( response )
-    print( "In uptime_cb" ) 
-    print( response )
+    print( "In uptime_cb" )
+    local r2=response:sub( 2, response:len() - 2 ) -- strip square brackets and newline
+    local decoded, pos, msg = json.decode( r2 )
+    if not decoded then
+        print( "Decode failed at "..tostring(pos)..": "..tostring(msg) )
+    else
+        -- print( json.prettify( decoded ))
+        -- If decoded.RESULT.MESSAGE is "OK", then the command executed successfully.
+        -- print( decoded.RESULT.MESSAGE )
+        uptimeField.text = string.format("%d", decoded.RESPONSE.pages.date.upTime )
+    end
 end
+
+local function dump_cb( response )
+    -- print("In dump_cb")
+    local r2=response:sub( 2, response:len() - 2 ) -- strip square brackets and newline
+    local decoded, pos, msg = json.decode( r2 )
+    if not decoded then
+        print( "Decode failed at "..tostring(pos)..": "..tostring(msg) )
+    else
+        -- print( json.prettify( decoded )) -- For debugging purposes
+        -- If decoded.RESULT.MESSAGE is "OK", then the command executed successfully.
+        print( decoded.RESULT.MESSAGE )
+        -- TODO: These magic numbers are untenable. These numbers work for
+        -- FWT1315TB.9, but there's no guarantee they'll work for other
+        -- FW versions.
+        -- We need to find a way to deduce the array index from the name of
+        -- the tag. This is a stupid redundancy that we ought to work around.
+        -- Maybe I can just delete all of the square brackets, wiping out the
+        -- arrays, and just deal -- with a squiggly-bracket JSON object.
+        -- TODO: Try that in a future commit.
+        snField.text = decoded.RESPONSE.pages[2].systemInfo[1].serialNumber.value
+        devNameField.text = decoded.RESPONSE.pages[2].systemInfo[7].deviceName.value
+        modelField.text =  decoded.RESPONSE.pages[2].systemInfo[8].deviceModel.value
+        fwField.text =  decoded.RESPONSE.pages[2].systemInfo[10].deviceFirmwareVersion.value
+        rteField.text =  decoded.RESPONSE.pages[2].systemInfo[15].rteVersion.value
+        licenseField.text =  decoded.RESPONSE.pages[2].systemInfo[17].licenses.value
+        uptimeField.text =  decoded.RESPONSE.pages[15].date[1].upTime.value
+    end
+end
+
 
 local function fieldHandler( textField )
 	return function( event )
@@ -75,8 +113,7 @@ local function fieldHandler( textField )
                           print( textField().text .. " is not a valid address" )
                         end
                         textField().text = ipAddr
-                        zumlink.cmd( ipAddr, "systemInfo", systeminfo_cb )
-                        zumlink.cmd( ipAddr, "upTime", uptime_cb )
+                        zumlink.cmd( ipAddr, "dump", dump_cb )
 			
 			-- Hide keyboard
 			native.setKeyboardFocus( nil )
@@ -146,7 +183,7 @@ function scene:create( event )
       gotoMenu()
     end
   end
-  
+ 
   -- Create the widgets
   local quitButton = widget.newButton(
     {
@@ -189,7 +226,7 @@ function scene:show( event )
 		end
 
 		ipAddrField = native.newTextField( 130, ipAddrLabel.y, fieldWidth, 30 )
-		ipAddrField:addEventListener( "userInput", fieldHandler( function() return ipAddrField end ) ) 
+		ipAddrField:addEventListener( "userInput", fieldHandler( function() return ipAddrField end ) )
 		sceneGroup:insert( ipAddrField)
 		ipAddrField.anchorX = 0
 		ipAddrField.placeholder = "xxx.xxx.xxx.xxx"
