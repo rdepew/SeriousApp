@@ -77,21 +77,19 @@ end
 
 local function dump_cb( response )
     -- print("In dump_cb")
-    print( response )
+    -- print( response )
     t = string.find( response, "Network error" )
-    print( t )
     if string.find( response, "Network error" ) then
         errorPopup( "Network Error", response:sub(16) .. " - " .. ipAddr )
         return
     end
-    local r2=response:sub( 2, response:len() - 2 ) -- strip square brackets and newline
-    local decoded, pos, msg = json.decode( r2 )
+    local decoded, pos, msg = json.decode( response )
     if not decoded then
         print( "Decode failed at "..tostring(pos)..": "..tostring(msg) )
     else
         -- print( json.prettify( decoded )) -- For debugging purposes
-        -- If decoded.RESULT.MESSAGE is "OK", then the command executed successfully.
-        print( decoded.RESULT.MESSAGE )
+        -- If decoded[1].RESULT.MESSAGE is "OK", then the command executed successfully.
+        print( decoded[1].RESULT.MESSAGE )
         -- TODO: These magic numbers are untenable. These numbers work for
         -- FWT1315TB.9, but there's no guarantee they'll work for other
         -- FW versions.
@@ -100,13 +98,13 @@ local function dump_cb( response )
         -- Maybe I can just delete all of the square brackets, wiping out the
         -- arrays, and just deal -- with a squiggly-bracket JSON object.
         -- TODO: Try that in a future commit.
-        snField.text = decoded.RESPONSE.pages[2].systemInfo[1].serialNumber.value
-        devNameField.text = decoded.RESPONSE.pages[2].systemInfo[7].deviceName.value
-        modelField.text =  decoded.RESPONSE.pages[2].systemInfo[8].deviceModel.value
-        fwField.text =  decoded.RESPONSE.pages[2].systemInfo[10].deviceFirmwareVersion.value
-        rteField.text =  decoded.RESPONSE.pages[2].systemInfo[15].rteVersion.value
-        licenseField.text =  decoded.RESPONSE.pages[2].systemInfo[17].licenses.value
-        uptimeField.text =  decoded.RESPONSE.pages[15].date[1].upTime.value
+        snField.text = decoded[1].RESPONSE.pages[2].systemInfo[1].serialNumber.value
+        devNameField.text = decoded[1].RESPONSE.pages[2].systemInfo[7].deviceName.value
+        modelField.text =  decoded[1].RESPONSE.pages[2].systemInfo[8].deviceModel.value
+        fwField.text =  decoded[1].RESPONSE.pages[2].systemInfo[10].deviceFirmwareVersion.value
+        rteField.text =  decoded[1].RESPONSE.pages[2].systemInfo[15].rteVersion.value
+        licenseField.text =  decoded[1].RESPONSE.pages[2].systemInfo[17].licenses.value
+        uptimeField.text =  decoded[1].RESPONSE.pages[16].date[1].upTime.value
     end
 end
 
