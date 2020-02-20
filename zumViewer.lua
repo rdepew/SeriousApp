@@ -42,6 +42,43 @@ local function errorPopup( title, msg )
   timer.performWithDelay( 10000, cancelMyAlert )
 end
 
+-- j: the JSON string we're searching.
+-- it: the thing we're searching for.
+-- x: the contents of it[]'value'].
+--    x starts out as an empty string.
+--    Once it's no longer empty, we're done.
+-- n: How many recursions we've done so far.
+local function find_in_dump(j, it, x, n)
+  if x ~= "" then
+    print("What am I doing here? x is found. Going up from level " .. n)
+    return x
+  end
+  -- print("Recursion level " .. n .. "-----------")
+  if type(j) == 'table' then
+    for k, v in pairs(j) do
+      if k ~= it then
+        -- print("Key is " .. k .. ", not " .. it .. ". Going down.")
+        x = find_in_dump(v, it, "", n+1)
+        if x ~= "" then
+          -- print("x is found. Going up from level " .. n)
+          return x
+        end
+      else
+        -- print("FOUND IT")
+        x = v['value']
+        -- print("value of " .. k .. " is: " ..x)
+        return x
+      end
+    end
+    -- print(it .. " not found at this level. Going up.")
+    return ""
+  else
+    -- print("Bottomed out at object: " .. j .. ". Going up.")
+    return ""
+  end
+end
+
+
 local function systeminfo_cb( response )
     -- print("In systeminfo_cb")
     local r2=response:sub( 2, response:len() - 2 ) -- strip square brackets and newline
@@ -98,13 +135,13 @@ local function dump_cb( response )
         -- Maybe I can just delete all of the square brackets, wiping out the
         -- arrays, and just deal -- with a squiggly-bracket JSON object.
         -- TODO: Try that in a future commit.
-        snField.text = decoded[1].RESPONSE.pages[2].systemInfo[1].serialNumber.value
-        devNameField.text = decoded[1].RESPONSE.pages[2].systemInfo[7].deviceName.value
-        modelField.text =  decoded[1].RESPONSE.pages[2].systemInfo[8].deviceModel.value
-        fwField.text =  decoded[1].RESPONSE.pages[2].systemInfo[10].deviceFirmwareVersion.value
-        rteField.text =  decoded[1].RESPONSE.pages[2].systemInfo[15].rteVersion.value
-        licenseField.text =  decoded[1].RESPONSE.pages[2].systemInfo[17].licenses.value
-        uptimeField.text =  decoded[1].RESPONSE.pages[16].date[1].upTime.value
+        snField.text = find_in_dump(decoded, 'serialNumber', "", 1)
+        devNameField.text = find_in_dump(decoded, 'deviceName', "", 1)
+        modelField.text =  find_in_dump(decoded, 'deviceModel', "", 1)
+        fwField.text =  find_in_dump(decoded, 'deviceFirmwareVersion', "", 1)
+        rteField.text =  find_in_dump(decoded, 'rteVersion', "", 1)
+        licenseField.text =  find_in_dump(decoded, 'licenses', "", 1)
+        uptimeField.text =  find_in_dump(decoded, 'upTime', "", 1)
     end
 end
 
