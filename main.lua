@@ -5,6 +5,7 @@
 -----------------------------------------------------------------------------------------
 
 local composer = require( "composer" )
+local color = require( "colors.defalt" )
  
 -- Hide status bar
 -- display.setStatusBar( display.HiddenStatusBar )
@@ -13,7 +14,7 @@ local composer = require( "composer" )
 -- math.randomseed( os.time() )
 
 -- Default background color
-display.setDefault("background", 226/255, 146/255, 67/255)
+display.setDefault("background", unpack(color.mainbg))
 
  
 -- Go to the menu screen

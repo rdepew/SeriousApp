@@ -2,6 +2,7 @@ local composer = require( "composer" )
 local widget = require( "widget" ) -- for the pushbutton
 local json = require( "json" )
 local zumlink = require( "zumlink" )
+local color = require( "colors.defalt" )
 
 local scene = composer.newScene()
 
@@ -261,16 +262,19 @@ function scene:show( event )
 	local phase = event.phase
 
 	if ( phase == "will" ) then
-		-- Code here runs when the scene is still off screen (but is about to come on screen)
+                -- Code here runs when the scene is still off screen (but is about to come
+                -- on screen)
 
 	elseif ( phase == "did" ) then
 		-- Code here runs when the scene is entirely on screen
                 --
-		-- The text field's native piece starts hidden, we show it after we are on screen.on
+                -- The text field's native piece starts hidden, we show it after we are on
+                -- screen.on
 
-		-- lets make the fields fit our adaptive screen better
-		-- Why 150? The labels are around 120px wide. We want at least a 10px margin on either side of the labels
-		-- and fields and we need some space betwen the label and the field. Let's start with 10px each
+		-- Let's make the fields fit our adaptive screen better
+                -- Why 150? The labels are around 120px wide. We want at least a 10px margin
+                -- on either side of the labels and fields and we need some space betwen the
+                -- label and the field. Let's start with 10px each
 
 		local fieldWidth = display.contentWidth - 150
 		if fieldWidth > 250 then
@@ -278,7 +282,8 @@ function scene:show( event )
 		end
 
 		ipAddrField = native.newTextField( 130, ipAddrLabel.y, fieldWidth, 30 )
-		ipAddrField:addEventListener( "userInput", fieldHandler( function() return ipAddrField end ) )
+		ipAddrField:addEventListener( "userInput", 
+                    fieldHandler( function() return ipAddrField end ) )
 		sceneGroup:insert( ipAddrField)
 		ipAddrField.anchorX = 0
 		ipAddrField.placeholder = "xxx.xxx.xxx.xxx"
