@@ -83,7 +83,6 @@
 -- The palette --
 --
 local palette = {}
-
 palette.black = { 0, 0, 0 }
 palette.white = { 1, 1, 1 }
 palette.red = { 1, 0, 0 }
@@ -96,6 +95,18 @@ palette.silver = { 0.75,0.75, 0.75 }
 palette.gray = { 0.5,0.5, 0.5 }
 palette.charcoal = { 0.25,0.25, 0.25 }
 palette.pumpkin = { 226/255, 146/255, 67/255 }
+
+local fw = {}
+fw.black = { 24/255, 27/255, 41/255 }
+fw.red = { 255/255, 30/255, 54/255 }
+
+local blues = {}
+blues.b1 = { 172/255, 203/255, 1 } -- lightest
+blues.b2 = { 146/255, 187/255, 1 }
+blues.b3 = { 120/255, 170/255, 1 }
+blues.b4 = { 100/255, 158/255, 1 }
+blues.b5 = {  63/255, 136/255, 1 } -- darkest
+
 
 -- The color scheme --
 --
