@@ -58,7 +58,7 @@
 -- You can use any other variable name besides 'color' in the commands in 
 -- your app. Taking and modifying the examples above:
 --
---   local xyzzy = require( "colors/defalt" )
+--   local xyzzy = require( "colors.defalt" )
 --
 --   display.setDefault( "background", unpack( xyzzy.mainbg ))
 --
